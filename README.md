@@ -16,12 +16,11 @@ pip install -r requirements.txt
 ##فعال کردن کاوه‌نگار ۱۰۰٪ واقعی (حتماً انجام بده)
 مرحله ۱: ساخت قالب در پنل کاوه‌نگار
 
-وارد پنل شو: https://panel.kavenegar.com
+وارد پنل شو: https://console.kavenegar.com
 برو به: سرویس‌ها → اعتبارسنجی (Verify)
 یه قالب جدید بساز با این متن دقیق:textکد ورود شما: {token}
 اسم قالب رو بذار: otp_login
-ارسال کن و منتظر تأیید باش (معمولاً ۱–۴ ساعت، گاهی همون لحظه تأیید می‌شه)
-
+ارسال کن و منتظر تأیید باش 
 مرحله ۲: تنظیم فایل .env
 فایل .env.example رو کپی کن و اسمش رو بذار .env:
 envSECRET_KEY=super-secret-change-in-production-1404
