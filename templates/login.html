@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود | سیستم حرفه‌ای</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazir:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Vazir', sans-serif; }</style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-10 w-full max-w-md border border-white/20">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">خوش آمدید</h1>
+            <p class="text-white/70">با شماره موبایل وارد شوید</p>
+        </div>
+
+        <!-- فرم شماره موبایل -->
+        <div id="phoneStep">
+            <div class="mb-6">
+                <input type="text" id="phone" placeholder="0912 345 6789" 
+                       class="w-full px-6 py-4 rounded-2xl bg-white/20 border border-white/30 text-white placeholder-white/50 text-lg text-center focus:outline-none focus:border-white/60 transition">
+            </div>
+            <button onclick="sendOTP()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-4 rounded-2xl hover:scale-105 transition transform">
+                ارسال کد تأیید
+            </button>
+        </div>
+
+        <!-- فرم کد -->
+        <div id="otpStep" class="hidden">
+            <div class="mb-6 text-center">
+                <p class="text-white/80 mb-4">کد ۵ رقمی برای شما ارسال شد</p>
+                <input type="text" id="otp" maxlength="5" placeholder="-----" 
+                       class="w-full px-6 py-4 rounded-2xl bg-white/20 border border-white/30 text-white text-3xl text-center tracking-widest focus:outline-none focus:border-white/60 transition">
+            </div>
+            <button onclick="verifyOTP()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-4 rounded-2xl hover:scale-105 transition transform">
+                ورود به حساب
+            </button>
+            <button onclick="backToPhone()" class="w-full mt-3 text-white/70 hover:text-white transition">
+                تغییر شماره
+            </button>
+        </div>
+
+        <div class="mt-8 text-center">
+            <p class="text-white/60 text-sm">طراحی شده با ❤️ توسط فاروق الوندی</p>
+        </div>
+    </div>
+
+    <script>
+        function sendOTP() {
+            const phone = document.getElementById('phone').value.replace(/\D/g, '');
+            if (phone.length !== 11) return alert('شماره موبایل صحیح نیست');
+
+            fetch('/send-otp/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': '{{ csrf_token }}'},
+                body: 'phone=' + phone
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('phoneStep').classList.add('hidden');
+                    document.getElementById('otpStep').classList.remove('hidden');
+                    document.getElementById('otp').focus();
+                }
+            });
+        }
+
+        function verifyOTP() {
+            const phone = document.getElementById('phone').value.replace(/\D/g, '');
+            const otp = document.getElementById('otp').value;
+
+            fetch('/verify-otp/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'phone=' + phone + '&otp=' + otp
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect || '/dashboard/';
+                } else {
+                    alert(data.error || 'خطا در ورود');
+                }
+            });
+        }
+
+        function backToPhone() {
+            document.getElementById('otpStep').classList.add('hidden');
+            document.getElementById('phoneStep').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
